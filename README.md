@@ -1,9 +1,11 @@
-# twiboot - a TWI / I2C bootloader for AVR MCUs ##
-twiboot is a simple/small bootloader for AVR MCUs written in C. It uses the integrated TWI or USI peripheral of the controller to implement a I2C slave.
+# twicom - a TWI / I2C bootloader and communications library for AVR MCUs ##
+The twicom library is based on the twiboot library and has extended it to allow the twi to be used not just for the boot flashing but also as a i2c communications library that can be used by the avr application to communicate via TWI (i2c)
+
 It was originally created to update I2C controlled BLMCs (Brushless Motor Controller) without an AVR ISP adapter.
 
-twiboot acts as a slave device on a TWI/I2C bus and allows reading/writing of the internal flash memory.
-As a compile time option (EEPROM_SUPPORT) twiboot also allows reading/writing of the whole internal EEPROM memory.
+twicom acts as a slave device on a TWI/I2C bus and allows reading/writing of the internal flash memory as well as allowing the application to expose other TWI/I2C endpoints.
+
+As a compile time option (EEPROM_SUPPORT) twicom also allows reading/writing of the whole internal EEPROM memory.
 The bootloader is not able to update itself (only application flash memory region accessible).
 
 Currently the following AVR MCUs are supported:
@@ -20,7 +22,7 @@ atmega328p | 826 (0x33A) | 512 words
 
 
 ## Operation ##
-twiboot is installed in the bootloader section and executed directly after reset (BOOTRST fuse is programmed).
+twicom is installed in the bootloader section and executed directly after reset (BOOTRST fuse is programmed).
 For MCUs without bootloader section see [Virtual bootloader section](#virtual-bootloader-section) below.
 
 While running, twiboot configures the TWI/USI peripheral as slave device and waits for valid protocol messages

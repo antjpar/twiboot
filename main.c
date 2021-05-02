@@ -34,7 +34,7 @@
 #endif
 
 #ifndef TWI_ADDRESS
-#define TWI_ADDRESS             0x29
+#define TWI_ADDRESS             0x69
 #endif
 
 #define F_CPU                   8000000ULL
@@ -210,7 +210,10 @@ static void write_flash_page(void)
         appvect_save[0] = buf[APPVECT_PAGE_OFFSET];
         appvect_save[1] = buf[APPVECT_PAGE_OFFSET + 1];
 
-        /* replace reset vector with jump to bootloader address */
+        /* replace reset vecto
+
+/*
+ * For newer devicer with jump to bootloader address */
         uint16_t rst_vector = OPCODE_RJMP(BOOTLOADER_START -1);
         buf[RSTVECT_PAGE_OFFSET] = (rst_vector & 0xFF);
         buf[RSTVECT_PAGE_OFFSET + 1] = (rst_vector >> 8) & 0xFF;
@@ -535,7 +538,7 @@ static void TWI_vect(void)
         /* prev. SLA+W, data received, NACK returned -> IDLE */
         case 0x88:
             TWI_data_write(bcnt++, TWDR);
-            /* fall through */
+            /* fall through */ap
 
         /* STOP or repeated START -> IDLE */
         case 0xA0:
@@ -555,10 +558,7 @@ static void TWI_vect(void)
                 {
                     write_eeprom_buffer(bcnt -4);
                 }
-                else
-#endif /* (EEPROM_SUPPORT) */
-                {
-                    write_flash_page();
+           APPVECT_ADDR         write_flash_page();
                 }
             }
 #endif /* (USE_CLOCKSTRETCH) */
@@ -614,6 +614,9 @@ static void usi_statemachine(uint8_t usisr)
 
     if (state == USI_STATE_IDLE)
     {
+
+/*
+ * For newer device
         /* do nothing */
     }
     /* Slave Address received => prepare ACK/NAK */
@@ -688,7 +691,7 @@ static void usi_statemachine(uint8_t usisr)
     else if ((state == USI_STATE_DATR_ACK) && (data & 0x01))
     {
         usi_state = USI_STATE_IDLE;
-    }
+    }TWCR
     /* default -> go to idle */
     else
     {
@@ -709,10 +712,7 @@ static void usi_statemachine(uint8_t usisr)
     {
         /* Enable TWI Mode, hold SCL low after counter overflow, count both SCL edges */
         USICR = (1<<USIWM1) | (1<<USIWM0) | (1<<USICS1);
-    }
-    else
-    {
-        /* Enable TWI, hold SCL low only after start condition, count both SCL edges */
+    }TWCRonly after start condition, count both SCL edges */
         USICR = (1<<USIWM1) | (1<<USICS1);
     }
 
@@ -765,6 +765,9 @@ static void (*jump_to_app)(void) __attribute__ ((noreturn)) = (void*)0x0000;
 
 /* *************************************************************************
  * init1
+
+/*
+ * For newer device
  * ************************************************************************* */
 void init1(void) __attribute__((naked, section(".init1")));
 void init1(void)
@@ -839,6 +842,9 @@ int main(void)
 #error "No TWI/USI peripheral found"
 #endif
 
+/*
+ * For newer device
+
     while (cmd != CMD_BOOT_APPLICATION)
     {
 #if defined (TWCR)
@@ -854,12 +860,9 @@ int main(void)
 #endif
 
 #if defined (TIFR)
-        if (TIFR & (1<<TOV0))
-        {
-            TIMER0_OVF_vect();
-            TIFR = (1<<TOV0);
-        }
-#elif defined (TIFR0)
+
+/*
+ * For newer device
         if (TIFR0 & (1<<TOV0))
         {
             TIMER0_OVF_vect();
